@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock title %}
+
+{% block content %}
+    <div class="detail-product">
+        <div class="detail-img">
+            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/noimage.jpg' %}{% endif %}" alt="" class="detail-mage">
+        </div>
+        <div class="detail-description">
+            <h2>{{ product.name }}</h2>
+            <h3>Категория: {{ product.category }}</h3>
+            <p>Описание: {{ product.description|linebreaks }}</p>
+            {% if product.discount %}
+                <div class="cart-discount">
+                    <p class="line">{{ product.price }}</p>
+                    <p>{{ product.sell_price }}</p>
+                </div>
+            {% else %}
+                <p class="price">{{ product.price }}</p>
+            {% endif %}
+            <a href="" class="cart-btn">В корзину</a>
+        </div>
+    </div>
+{% endblock content %}
+    
