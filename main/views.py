@@ -17,3 +17,16 @@ def product_detail(request, slug):
                   {'product': product})
 
 
+def product_list(request, category_slug=None):
+    category = None
+    categoryies = Category.objects.all()
+    products = Product.objects.filter(available=True)
+    if category_slug:
+        category = get_object_or_404(Category,
+                                     slug=category_slug)
+        products = products.filter(category=category)
+    return render(request,
+                  'main/product/list.html',
+                  {'category': category,
+                   'categories': categoryies,
+                   'products': products})

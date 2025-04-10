@@ -20,7 +20,6 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category,
-                                 verbose_name='продукт',
                                  related_name='products',
                                  on_delete=models.CASCADE)
     name = models.CharField(verbose_name='название', max_length=50)
@@ -57,6 +56,7 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('main:product_detail',
                        args=[self.slug])
+    
         
     def sell_price(self):
         if self.discount:
