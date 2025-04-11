@@ -1,8 +1,11 @@
 *.sqlite3
 *.pyc
 __pycache__/
+.pylintrc
 venv/
 .env
 media/
 .git/
 .vscode/
+.idea
+ids.txt
