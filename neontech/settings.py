@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-# from .. import keys
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,9 +86,9 @@ WSGI_APPLICATION = 'neontech.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neontech',
-        'USER': 'neontech',
-        'PASSWORD': 'neontech',
+        'NAME': os.getenv('database_name'),
+        'USER': os.getenv('database_user'),
+        'PASSWORD': os.getenv('database_password'),
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -139,3 +142,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CART_SESSION_ID = 'cart'
 
 AUTH_USER_MODEL = 'users.User'
+
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_API_VERSION = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_PUBLISHABLE_KEY')
