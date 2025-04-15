@@ -1,9 +1,7 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}
-    Home
-{% endblock title %}
+{% block title %}Home{% endblock title %}
 
 {% block content %}
     <section class="home d-flex flex-column">
@@ -32,7 +30,6 @@
             {% endfor %}
         </div>
     </section>
-    
     <img src="{% static 'img/logogot.png' %}" alt="" class="logogothic">
     <img src="{% static 'img/subtitlee.png' %}" alt="" class="subtitlee">
 {% endblock content %}

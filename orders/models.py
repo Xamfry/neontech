@@ -1,6 +1,8 @@
 from django.db import models
 from main.models import Product
 from users.models import User
+from django.conf import settings
+
 
 class Order(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.SET_DEFAULT,
@@ -14,15 +16,19 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+    stripe_id = models.CharField(max_length=250, blank=True)
     
-    class Mets:
+    
+    class Meta:
         ordering = ['-created']
         indexes = [
             models.Index(fields=['-created']),
         ]
         
+    
     def __str__(self):
         return f'Order {self.id}'
+    
     
     def get_total_cost(self):
         return sum(item.get_cost() for item in self.items.all())
@@ -46,6 +52,4 @@ class OrderItem(models.Model):
     
     def get_cost(self):
         return self.price * self.quantity
-    
-    
     
