@@ -27,6 +27,9 @@ def payment_process(request):
             'client_reference_id': order.id,
             'success_url': success_url,
             'cancel_url': cancel_url,
+            'metadata': {
+                'order_id': str(order.id),
+            },
             'line_items': []
         }
         for item in order.items.all():
@@ -42,6 +45,8 @@ def payment_process(request):
                 'quantity': item.quantity,
             })
         session = stripe.checkout.Session.create(**session_data)
+        order.stripe_id = session.id
+        order.save()
         return redirect(session.url, code=303)
     else:
         return render(request, 'payment/process.html', locals())
