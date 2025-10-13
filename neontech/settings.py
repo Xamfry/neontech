@@ -35,17 +35,38 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'main',
-    'cart',
-    'users',
-    'orders',
-    'payment',
+    # стандартные приложения джанго
+    'django.contrib.admin', # админка
+    'django.contrib.auth', # система аутентификации
+    'django.contrib.contenttypes', # фреймворк контент-типов
+    'django.contrib.sessions', # система управления сессиями
+    'django.contrib.messages', # фреймворк сообщений
+    'django.contrib.staticfiles', # управление статическими файлами
+    'django.contrib.sites', # allauth
+    # наши приложения
+    'main', # основное приложение
+    'cart', # корзина
+    'users', # пользователи
+    'orders', # заказы
+    'payment', # оплата
+    # безопасность/аутентификация
+    'axes',                # лимит попыток
+    'django_otp',          # ядро OTP
+    'django_otp.plugins.otp_totp',  # TOTP устройства
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.openid_connect',
+]
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Пароли — Argon2id первым
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +75,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -95,24 +118,50 @@ DATABASES = {
 }
 
 
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # час блокировки
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_ONLY_USER_FAILURES = True
+AXES_USE_USER_AGENT = True
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'users.validators.PwnedPasswordValidator'
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}
     },
 ]
 
+# ALLAUTH (OIDC + PKCE)
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'openid_connect': {
+        'SERVERS': [
+            {
+                'id': 'my-oidc',  # slug провайдера в URL
+                'name': 'My OIDC',
+                'server_url': 'https://<issuer>/.well-known/openid-configuration',
+                'client_id': os.environ.get('OIDC_CLIENT_ID'),
+                'secret': os.environ.get('OIDC_CLIENT_SECRET'),
+                'claims': {'id_token': {'email': {'essential': True}}},
+            }
+        ],
+        # PKCE включается на уровне allauth OAuth2
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
