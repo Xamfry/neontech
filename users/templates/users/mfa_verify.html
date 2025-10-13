@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Подтверждение входа (MFA){% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 560px; padding: 24px;">
+  <h1>Подтверждение входа</h1>
+  <p>Введи одноразовый код из Google Authenticator.</p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div style="margin: 12px 0;">
+      <label for="token">Код из приложения</label>
+      <input
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        id="token"
+        name="token"
+        required
+        placeholder="123456"
+        class="form-control"
+        style="max-width: 280px;"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Подтвердить</button>
+    <a href="{% url 'mfa_setup' %}" class="btn btn-link">Настроить заново</a>
+  </form>
+
+  <hr>
+  <p style="color:#666; font-size: 0.95rem;">
+    Проблемы с кодом? Проверь время на телефоне и попробуй новый код спустя 30 секунд.
+  </p>
+</div>
+{% endblock %}

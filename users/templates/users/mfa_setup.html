@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Настройка MFA (TOTP){% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 640px; padding: 24px;">
+  <h1>Настройка MFA (Google Authenticator)</h1>
+  <p>Отсканируй QR-код в приложении Google Authenticator (или любом TOTP-приложении), после чего введи одноразовый код ниже.</p>
+
+  <div style="display:flex; gap:16px; align-items:center; margin: 16px 0;">
+    <img
+      src="data:image/png;base64,{{ qr_b64 }}"
+      alt="QR для TOTP"
+      style="width: 200px; height: 200px; border:1px solid #ddd; border-radius:12px; padding:8px;"
+    />
+    <ul style="margin:0;">
+      <li>Открой Google Authenticator → <em>+</em> → «Сканировать QR-код».</li>
+      <li>Если камера недоступна, выбери «Ввести ключ вручную» и следуй инструкциям приложения.</li>
+      <li>Код обновляется каждые 30 секунд.</li>
+    </ul>
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div style="margin: 12px 0;">
+      <label for="token">Код из приложения</label>
+      <input
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        id="token"
+        name="token"
+        required
+        placeholder="123456"
+        class="form-control"
+        style="max-width: 280px;"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Подтвердить</button>
+    <a href="{% url 'mfa_disable' %}" class="btn btn-link">Отключить MFA</a>
+  </form>
+
+  <hr>
+  <p style="color:#666; font-size: 0.95rem;">
+    Если код не принимается: проверь время на устройстве.
+  </p>
+</div>
+{% endblock %}

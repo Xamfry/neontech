@@ -35,33 +35,24 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # стандартные приложения джанго
-    'django.contrib.admin', # админка
-    'django.contrib.auth', # система аутентификации
-    'django.contrib.contenttypes', # фреймворк контент-типов
-    'django.contrib.sessions', # система управления сессиями
-    'django.contrib.messages', # фреймворк сообщений
-    'django.contrib.staticfiles', # управление статическими файлами
-    'django.contrib.sites', # allauth
-    # наши приложения
-    'main', # основное приложение
-    'cart', # корзина
-    'users', # пользователи
-    'orders', # заказы
-    'payment', # оплата
-    # безопасность/аутентификация
-    'axes',                # лимит попыток
-    'django_otp',          # ядро OTP
-    'django_otp.plugins.otp_totp',  # TOTP устройства
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.openid_connect',
-]
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
 
-SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+    'main',
+    'cart',
+    'users',
+    'orders',
+    'payment',
+
+    'axes', 
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+]
 
 # Пароли — Argon2id первым
 PASSWORD_HASHERS = [
@@ -136,32 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}
     },
 ]
-
-# ALLAUTH (OIDC + PKCE)
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
-
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
-SOCIALACCOUNT_PROVIDERS = {
-    'openid_connect': {
-        'SERVERS': [
-            {
-                'id': 'my-oidc',  # slug провайдера в URL
-                'name': 'My OIDC',
-                'server_url': 'https://<issuer>/.well-known/openid-configuration',
-                'client_id': os.environ.get('OIDC_CLIENT_ID'),
-                'secret': os.environ.get('OIDC_CLIENT_SECRET'),
-                'claims': {'id_token': {'email': {'essential': True}}},
-            }
-        ],
-        # PKCE включается на уровне allauth OAuth2
-    }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
